@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="API Automation">
+
+    <listeners>
+        <listener class-name="com.epam.reportportal.testng.ReportPortalTestNGListener" />
+    </listeners>
+
+    <test name="API Tests">
+        <parameter name="env" value="test"/>
+        <classes>
+            <class name="com.backend.ListUsersTests"/>
+            <class name="com.backend.SingleUserTests"/>
+        </classes>
+    </test>
+</suite>
