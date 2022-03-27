@@ -8,5 +8,5 @@ import lombok.Data;
 public class GetContentsResponse {
     boolean isSuccess;
     String message;
-
+    Result result;
 }

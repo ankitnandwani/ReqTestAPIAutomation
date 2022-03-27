@@ -3,9 +3,12 @@ package com.backend.Entities.Response.ReqTest;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Builder
 public class Result {
+    List<Content> contents;
     String type;
     long id;
     int customId;

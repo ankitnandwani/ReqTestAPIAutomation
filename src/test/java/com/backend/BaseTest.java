@@ -3,20 +3,28 @@ package com.backend;
 import com.backend.Entities.Request.ReqTest.CreateTestRun;
 import com.backend.Entities.Request.ReqTest.Fields;
 import com.backend.Entities.Request.ReqTest.Name;
+import com.backend.Entities.Response.ReqTest.Content;
 import com.backend.Entities.Response.ReqTest.CreateTestRunResponse;
+import com.backend.Entities.Response.ReqTest.GetContentsResponse;
 import com.backend.ReqTestController.TestRunController;
 import com.google.gson.Gson;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testng.ITestContext;
-import org.testng.annotations.*;
+import org.testng.ITestResult;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
 
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Predicate;
 
 public class BaseTest {
 
@@ -58,12 +66,32 @@ public class BaseTest {
     }
 
     @AfterMethod
-    public void setUp(ITestContext context){
+    public void setUp(ITestContext context, ITestResult result){
+
+        String testRunId = String.valueOf(context.getAttribute("testRunId"));
+        String testResult = result.getStatus() == ITestResult.SUCCESS ? "OK" : "Failed";
+
         testRunController.addTestcase(
                 getApiPath(Constants.REQTEST, Constants.ADD_TEST_CASE),
                 getReqtestHeaders(),
                 getAddTestCaseBody((String) context.getAttribute("ReqTestCaseId")),
-                String.valueOf(context.getAttribute("testRunId")));
+                testRunId);
+
+        GetContentsResponse contentsResponse = testRunController.getTestRunContents(
+                getApiPath(Constants.REQTEST, Constants.GET_CONTENTS),
+                getReqtestHeaders(),
+                testRunId);
+
+        Predicate<Content> findWithTestCaseName = e -> e.getName().equals(result.getName());
+        long contentId = contentsResponse.getResult().getContents().stream()
+                .filter(findWithTestCaseName).findFirst().get().getId();
+
+        testRunController.executeContent(
+                getApiPath(Constants.REQTEST, Constants.EXECUTE_CONTENT),
+                getReqtestHeaders(),
+                getResultQueryParams(testResult),
+                testRunId,
+                "[" + contentId + "]");
     }
 
     public void initializeEnvProperties(String configFile){
@@ -97,5 +125,11 @@ public class BaseTest {
 
     private String getAddTestCaseBody(String testCaseId){
         return "[ " + testCaseId + " ]";
+    }
+
+    private Map<String, String> getResultQueryParams(String result){
+        Map<String, String> qParams = new HashMap<>();
+        qParams.put("result", result);
+        return qParams;
     }
 }

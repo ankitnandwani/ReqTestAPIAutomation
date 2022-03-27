@@ -22,4 +22,8 @@ public class RequestUtils {
     public Response sendPostWithBodyAndPath(String url, Map<String, ?> headers, Map<String, ?> params, String body){
         return RestAssured.given().headers(headers).log().all().pathParams(params).body(body).post(url);
     }
+
+    public Response sendPostWithBodyPathAndQuery(String url, Map<String, ?> headers, Map<String, ?> pathPrams, Map<String, ?> qParams, String body){
+        return RestAssured.given().headers(headers).log().all().pathParams(pathPrams).queryParams(qParams).body(body).post(url);
+    }
 }

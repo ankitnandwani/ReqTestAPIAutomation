@@ -2,6 +2,7 @@ package com.backend.ReqTestController;
 
 import com.backend.Constants;
 import com.backend.Entities.Response.ReqTest.CreateTestRunResponse;
+import com.backend.Entities.Response.ReqTest.GetContentsResponse;
 import com.backend.RequestUtils;
 import com.google.gson.Gson;
 import io.restassured.response.Response;
@@ -22,9 +23,10 @@ public class TestRunController {
     public CreateTestRunResponse createNewTestRun(String url, Map<String, ?> headers, String body){
         log.info("Body : " + body);
         Response response = requestUtils.sendPostWithBodyAndPath(url, headers, getProjectIdParam(), body);
-        log.info("Response : " + response.getBody().asString());
+        String responseString = response.getBody().asString();
+        log.info("Response : " + responseString);
         Assert.assertEquals(response.getStatusCode(), 200);
-        return gson.fromJson(response.getBody().asString(), CreateTestRunResponse.class);
+        return gson.fromJson(responseString, CreateTestRunResponse.class);
     }
 
     public void addTestcase(String url, Map<String, ?> headers, String body, String testRunId){
@@ -34,10 +36,19 @@ public class TestRunController {
         Assert.assertEquals(response.getStatusCode(), 200);
     }
 
-    public void getTestRunContents(String url, Map<String, ?> headers, String body, String testRunId){
-        log.info("Body : " + body);
+    public GetContentsResponse getTestRunContents(String url, Map<String, ?> headers, String testRunId){
         Response response = requestUtils.sendGetWithPathParams(url, headers, getProjectIdAndTestRunIdParam(testRunId));
-        log.info("Response : " + response.getBody().asString());
+        String responseString = response.getBody().asString();
+        log.info("Response : " + responseString);
+        Assert.assertEquals(response.getStatusCode(), 200);
+        return gson.fromJson(responseString, GetContentsResponse.class);
+    }
+
+    public void executeContent(String url, Map<String, ?> headers, Map<String, ?> qParams, String testRunId, String body){
+        Response response = requestUtils.sendPostWithBodyPathAndQuery(url, headers,
+                getProjectIdAndTestRunIdParam(testRunId), qParams, body);
+        String responseString = response.getBody().asString();
+        log.info("Response : " + responseString);
         Assert.assertEquals(response.getStatusCode(), 200);
     }
 

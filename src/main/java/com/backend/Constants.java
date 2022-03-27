@@ -9,4 +9,6 @@ public interface Constants {
     String REQTEST_PAT = "f5kOOHW8cKE4NZh5pOQKmzwkenmXPMc6b0mNZC5YZO4g8NL2iyyADxqB7amr4MnZ";
     String PROJECT_ID = "69985";
     String ADD_TEST_CASE = "/{projectId}/testruns/{testRunId}/contents/add-testcases";
+    String GET_CONTENTS = "/{projectId}/testruns/{testRunId}/contents";
+    String EXECUTE_CONTENT = "/{projectId}/testruns/{testRunId}/contents/execute";
 }
