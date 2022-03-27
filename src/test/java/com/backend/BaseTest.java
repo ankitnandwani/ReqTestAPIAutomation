@@ -74,7 +74,7 @@ public class BaseTest {
         testRunController.addTestcase(
                 getApiPath(Constants.REQTEST, Constants.ADD_TEST_CASE),
                 getReqtestHeaders(),
-                getAddTestCaseBody((String) context.getAttribute("ReqTestCaseId")),
+                getArrayBody((String) context.getAttribute("ReqTestCaseId")),
                 testRunId);
 
         GetContentsResponse contentsResponse = testRunController.getTestRunContents(
@@ -91,7 +91,7 @@ public class BaseTest {
                 getReqtestHeaders(),
                 getResultQueryParams(testResult),
                 testRunId,
-                "[" + contentId + "]");
+                getArrayBody(String.valueOf(contentId)));
     }
 
     public void initializeEnvProperties(String configFile){
@@ -123,8 +123,8 @@ public class BaseTest {
         return gson.toJson(testRun);
     }
 
-    private String getAddTestCaseBody(String testCaseId){
-        return "[ " + testCaseId + " ]";
+    private String getArrayBody(String id){
+        return "[ " + id + " ]";
     }
 
     private Map<String, String> getResultQueryParams(String result){
